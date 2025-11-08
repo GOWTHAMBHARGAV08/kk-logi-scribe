@@ -82,7 +82,7 @@ export const TripSummary = ({ dateRange, userId }: TripSummaryProps) => {
 
     const { data, error } = await supabase
       .from("trips")
-      .select("vehicle, fuel, driver_fee, handling_fee, tolls, petty_cash, other_expenses")
+      .select("vehicle, revenue, fuel, driver_fee, handling_fee, tolls, petty_cash, other_expenses")
       .eq("user_id", userId)
       .gte("date", format(dateRange.from, "yyyy-MM-dd"))
       .lte("date", format(dateRange.to, "yyyy-MM-dd"));
@@ -92,23 +92,49 @@ export const TripSummary = ({ dateRange, userId }: TripSummaryProps) => {
       return;
     }
 
-    const fieldMap: Record<string, keyof typeof data[0]> = {
-      Fuel: "fuel",
-      "Driver Fees": "driver_fee",
-      Handling: "handling_fee",
-      Tolls: "tolls",
-      "Petty Cash": "petty_cash",
-      Other: "other_expenses",
-    };
-
-    const field = fieldMap[category];
     const vehicleTotals = data.reduce((acc, trip) => {
       const vehicle = trip.vehicle || "Unknown";
-      const amount = Number(trip[field] || 0);
+      
       if (!acc[vehicle]) {
         acc[vehicle] = 0;
       }
-      acc[vehicle] += amount;
+
+      // Handle different category types
+      if (category === "Total Revenue") {
+        acc[vehicle] += Number(trip.revenue || 0);
+      } else if (category === "Total Expenses") {
+        const expenses = 
+          Number(trip.fuel || 0) +
+          Number(trip.driver_fee || 0) +
+          Number(trip.handling_fee || 0) +
+          Number(trip.tolls || 0) +
+          Number(trip.petty_cash || 0) +
+          Number(trip.other_expenses || 0);
+        acc[vehicle] += expenses;
+      } else if (category === "Net Profit") {
+        const revenue = Number(trip.revenue || 0);
+        const expenses = 
+          Number(trip.fuel || 0) +
+          Number(trip.driver_fee || 0) +
+          Number(trip.handling_fee || 0) +
+          Number(trip.tolls || 0) +
+          Number(trip.petty_cash || 0) +
+          Number(trip.other_expenses || 0);
+        acc[vehicle] += (revenue - expenses);
+      } else {
+        // Individual expense categories
+        const fieldMap: Record<string, keyof typeof trip> = {
+          Fuel: "fuel",
+          "Driver Fees": "driver_fee",
+          Handling: "handling_fee",
+          Tolls: "tolls",
+          "Petty Cash": "petty_cash",
+          Other: "other_expenses",
+        };
+        const field = fieldMap[category];
+        acc[vehicle] += Number(trip[field] || 0);
+      }
+      
       return acc;
     }, {} as Record<string, number>);
 
@@ -163,7 +189,10 @@ export const TripSummary = ({ dateRange, userId }: TripSummaryProps) => {
   return (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="bg-success/10 border-success/20">
+        <Card 
+          className="bg-success/10 border-success/20 cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => handleCardClick("Total Revenue")}
+        >
           <CardHeader>
             <CardTitle className="text-lg text-success">Total Revenue</CardTitle>
           </CardHeader>
@@ -172,7 +201,10 @@ export const TripSummary = ({ dateRange, userId }: TripSummaryProps) => {
           </CardContent>
         </Card>
 
-        <Card className="bg-primary text-primary-foreground">
+        <Card 
+          className="bg-primary text-primary-foreground cursor-pointer hover:shadow-lg transition-shadow"
+          onClick={() => handleCardClick("Total Expenses")}
+        >
           <CardHeader>
             <CardTitle className="text-lg">Total Expenses</CardTitle>
           </CardHeader>
@@ -181,7 +213,10 @@ export const TripSummary = ({ dateRange, userId }: TripSummaryProps) => {
           </CardContent>
         </Card>
 
-        <Card className={totalProfit >= 0 ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"}>
+        <Card 
+          className={`${totalProfit >= 0 ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"} cursor-pointer hover:shadow-lg transition-shadow`}
+          onClick={() => handleCardClick("Net Profit")}
+        >
           <CardHeader>
             <CardTitle className="text-lg">Net Profit</CardTitle>
           </CardHeader>
