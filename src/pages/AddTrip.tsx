@@ -20,6 +20,7 @@ const tripSchema = z.object({
   trip_id: z.string().trim().min(1, "Trip ID is required"),
   vehicle: z.string().trim().min(1, "Vehicle number is required"),
   driver_name: z.string().trim().min(1, "Driver name is required"),
+  revenue: z.number().min(0, "Revenue must be 0 or greater"),
   fuel: z.number().min(0, "Fuel cost must be 0 or greater"),
   driver_fee: z.number().min(0, "Driver fee must be 0 or greater"),
   handling_fee: z.number().min(0, "Handling fee must be 0 or greater"),
@@ -41,6 +42,7 @@ const AddTrip = () => {
   const [tripId, setTripId] = useState("");
   const [vehicle, setVehicle] = useState("");
   const [driverName, setDriverName] = useState("");
+  const [revenue, setRevenue] = useState("");
   const [fuel, setFuel] = useState("");
   const [driverFee, setDriverFee] = useState("");
   const [handlingFee, setHandlingFee] = useState("");
@@ -101,6 +103,7 @@ const AddTrip = () => {
     setTripId(data.trip_id);
     setVehicle(data.vehicle);
     setDriverName(data.driver_name);
+    setRevenue(data.revenue?.toString() || "0");
     setFuel(data.fuel.toString());
     setDriverFee(data.driver_fee.toString());
     setHandlingFee(data.handling_fee.toString());
@@ -120,6 +123,7 @@ const AddTrip = () => {
       trip_id: tripId,
       vehicle,
       driver_name: driverName,
+      revenue: parseFloat(revenue) || 0,
       fuel: parseFloat(fuel) || 0,
       driver_fee: parseFloat(driverFee) || 0,
       handling_fee: parseFloat(handlingFee) || 0,
@@ -152,6 +156,7 @@ const AddTrip = () => {
             trip_id: validation.data.trip_id,
             vehicle: validation.data.vehicle,
             driver_name: validation.data.driver_name,
+            revenue: validation.data.revenue,
             fuel: validation.data.fuel,
             driver_fee: validation.data.driver_fee,
             handling_fee: validation.data.handling_fee,
@@ -177,6 +182,7 @@ const AddTrip = () => {
           trip_id: validation.data.trip_id,
           vehicle: validation.data.vehicle,
           driver_name: validation.data.driver_name,
+          revenue: validation.data.revenue,
           fuel: validation.data.fuel,
           driver_fee: validation.data.driver_fee,
           handling_fee: validation.data.handling_fee,
@@ -283,6 +289,20 @@ const AddTrip = () => {
                   value={driverName}
                   onChange={(e) => setDriverName(e.target.value)}
                   required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="revenue" className="text-success">Revenue / Income (₹) *</Label>
+                <Input
+                  id="revenue"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={revenue}
+                  onChange={(e) => setRevenue(e.target.value)}
+                  required
+                  className="border-success/30 focus:border-success"
                 />
               </div>
 

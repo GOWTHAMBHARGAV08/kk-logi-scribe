@@ -28,6 +28,7 @@ export type Database = {
           other_expenses_description: string | null
           pc_note: string | null
           petty_cash: number | null
+          revenue: number
           tolls: number
           trip_id: string
           updated_at: string
@@ -47,6 +48,7 @@ export type Database = {
           other_expenses_description?: string | null
           pc_note?: string | null
           petty_cash?: number | null
+          revenue?: number
           tolls?: number
           trip_id: string
           updated_at?: string
@@ -66,6 +68,7 @@ export type Database = {
           other_expenses_description?: string | null
           pc_note?: string | null
           petty_cash?: number | null
+          revenue?: number
           tolls?: number
           trip_id?: string
           updated_at?: string

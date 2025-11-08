@@ -33,6 +33,7 @@ interface Trip {
   trip_id: string;
   vehicle: string;
   driver_name: string;
+  revenue: number;
   fuel: number;
   driver_fee: number;
   handling_fee: number;
@@ -149,37 +150,43 @@ const Trips = () => {
       "Trip ID",
       "Vehicle",
       "Driver",
+      "Revenue",
       "Fuel",
       "Driver Fee",
       "Handling",
       "Tolls",
       "Petty Cash",
       "Other",
-      "Total",
+      "Total Expenses",
+      "Profit",
       "Notes",
     ];
 
     const csvData = filteredTrips.map((trip) => {
-      const total =
+      const totalExpenses =
         Number(trip.fuel) +
         Number(trip.driver_fee) +
         Number(trip.handling_fee) +
         Number(trip.tolls) +
         Number(trip.petty_cash || 0) +
         Number(trip.other_expenses || 0);
+      
+      const profit = Number(trip.revenue || 0) - totalExpenses;
 
       return [
         format(new Date(trip.date), "yyyy-MM-dd"),
         trip.trip_id,
         trip.vehicle,
         trip.driver_name,
+        trip.revenue || 0,
         trip.fuel,
         trip.driver_fee,
         trip.handling_fee,
         trip.tolls,
         trip.petty_cash || 0,
         trip.other_expenses || 0,
-        total,
+        totalExpenses,
+        profit,
         trip.notes || "",
       ];
     });
@@ -254,11 +261,9 @@ const Trips = () => {
                     <TableHead>Trip ID</TableHead>
                     <TableHead>Vehicle</TableHead>
                     <TableHead>Driver</TableHead>
-                    <TableHead className="text-right">Fuel</TableHead>
-                    <TableHead className="text-right">Driver Fee</TableHead>
-                    <TableHead className="text-right">Handling</TableHead>
-                    <TableHead className="text-right">Tolls</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
+                    <TableHead className="text-right text-success">Revenue</TableHead>
+                    <TableHead className="text-right">Expenses</TableHead>
+                    <TableHead className="text-right font-semibold">Profit</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -271,19 +276,21 @@ const Trips = () => {
                     </TableRow>
                   ) : filteredTrips.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={10} className="text-center py-8">
+                      <TableCell colSpan={8} className="text-center py-8">
                         No trips found
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredTrips.map((trip) => {
-                      const total =
+                      const totalExpenses =
                         Number(trip.fuel) +
                         Number(trip.driver_fee) +
                         Number(trip.handling_fee) +
                         Number(trip.tolls) +
                         Number(trip.petty_cash || 0) +
                         Number(trip.other_expenses || 0);
+                      
+                      const profit = Number(trip.revenue || 0) - totalExpenses;
 
                       return (
                         <TableRow key={trip.id}>
@@ -291,11 +298,11 @@ const Trips = () => {
                           <TableCell className="font-medium">{trip.trip_id}</TableCell>
                           <TableCell>{trip.vehicle}</TableCell>
                           <TableCell>{trip.driver_name}</TableCell>
-                          <TableCell className="text-right">₹{Number(trip.fuel).toLocaleString()}</TableCell>
-                          <TableCell className="text-right">₹{Number(trip.driver_fee).toLocaleString()}</TableCell>
-                          <TableCell className="text-right">₹{Number(trip.handling_fee).toLocaleString()}</TableCell>
-                          <TableCell className="text-right">₹{Number(trip.tolls).toLocaleString()}</TableCell>
-                          <TableCell className="text-right font-semibold">₹{total.toLocaleString()}</TableCell>
+                          <TableCell className="text-right text-success font-medium">₹{Number(trip.revenue || 0).toLocaleString()}</TableCell>
+                          <TableCell className="text-right">₹{totalExpenses.toLocaleString()}</TableCell>
+                          <TableCell className={`text-right font-semibold ${profit >= 0 ? 'text-success' : 'text-destructive'}`}>
+                            ₹{profit.toLocaleString()}
+                          </TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
                               <Button

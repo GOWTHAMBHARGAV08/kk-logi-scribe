@@ -14,6 +14,7 @@ interface TripSummaryProps {
 
 export const TripSummary = ({ dateRange, userId }: TripSummaryProps) => {
   const [summary, setSummary] = useState({
+    totalRevenue: 0,
     totalFuel: 0,
     totalDriverFee: 0,
     totalHandling: 0,
@@ -44,6 +45,7 @@ export const TripSummary = ({ dateRange, userId }: TripSummaryProps) => {
 
       const totals = data.reduce(
         (acc, trip) => ({
+          totalRevenue: acc.totalRevenue + Number(trip.revenue || 0),
           totalFuel: acc.totalFuel + Number(trip.fuel || 0),
           totalDriverFee: acc.totalDriverFee + Number(trip.driver_fee || 0),
           totalHandling: acc.totalHandling + Number(trip.handling_fee || 0),
@@ -53,6 +55,7 @@ export const TripSummary = ({ dateRange, userId }: TripSummaryProps) => {
           tripCount: acc.tripCount + 1,
         }),
         {
+          totalRevenue: 0,
           totalFuel: 0,
           totalDriverFee: 0,
           totalHandling: 0,
@@ -70,13 +73,15 @@ export const TripSummary = ({ dateRange, userId }: TripSummaryProps) => {
     fetchSummary();
   }, [dateRange, userId]);
 
-  const grandTotal =
+  const totalExpenses =
     summary.totalFuel +
     summary.totalDriverFee +
     summary.totalHandling +
     summary.totalTolls +
     summary.totalPettyCash +
     summary.totalOther;
+
+  const totalProfit = summary.totalRevenue - totalExpenses;
 
   const summaryItems = [
     { label: "Fuel", value: summary.totalFuel, icon: Fuel, color: "text-orange-600" },
@@ -106,15 +111,35 @@ export const TripSummary = ({ dateRange, userId }: TripSummaryProps) => {
 
   return (
     <div className="space-y-4">
-      <Card className="bg-primary text-primary-foreground">
-        <CardHeader>
-          <CardTitle className="text-2xl">Total Expenses</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-4xl font-bold">₹{grandTotal.toLocaleString()}</p>
-          <p className="text-sm opacity-90 mt-2">{summary.tripCount} trips recorded</p>
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card className="bg-success/10 border-success/20">
+          <CardHeader>
+            <CardTitle className="text-lg text-success">Total Revenue</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold text-success">₹{summary.totalRevenue.toLocaleString()}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-primary text-primary-foreground">
+          <CardHeader>
+            <CardTitle className="text-lg">Total Expenses</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold">₹{totalExpenses.toLocaleString()}</p>
+          </CardContent>
+        </Card>
+
+        <Card className={totalProfit >= 0 ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"}>
+          <CardHeader>
+            <CardTitle className="text-lg">Net Profit</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold">₹{totalProfit.toLocaleString()}</p>
+            <p className="text-sm opacity-90 mt-2">{summary.tripCount} trips</p>
+          </CardContent>
+        </Card>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {summaryItems.map((item) => (
