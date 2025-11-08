@@ -77,12 +77,12 @@ const Dashboard = () => {
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary rounded-lg">
-              <Truck className="h-6 w-6 text-primary-foreground" />
+            <div className="p-2 bg-destructive rounded-lg">
+              <Truck className="h-6 w-6 text-destructive-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">KK LOGISTICS</h1>
-              <p className="text-sm text-muted-foreground">Trip & Expense Manager, AMALESH</p>
+              <h1 className="text-xl font-bold text-destructive">KK LOGISTICS</h1>
+              <p className="text-sm text-destructive">Trip & Expense Manager, AMALESH</p>
             </div>
           </div>
           <Button variant="outline" onClick={handleLogout}>
