@@ -9,30 +9,35 @@ import { User, Session } from "@supabase/supabase-js";
 import { TripSummary } from "@/components/TripSummary";
 import { DateRangePicker } from "@/components/DateRangePicker";
 import { startOfMonth, endOfMonth } from "date-fns";
-
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [dateRange, setDateRange] = useState({
     from: startOfMonth(new Date()),
-    to: endOfMonth(new Date()),
+    to: endOfMonth(new Date())
   });
   const navigate = useNavigate();
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (!session) {
-          navigate("/auth");
-        }
+    const {
+      data: {
+        subscription
       }
-    );
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (!session) {
+        navigate("/auth");
+      }
+    });
+    supabase.auth.getSession().then(({
+      data: {
+        session
+      }
+    }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (!session) {
@@ -40,40 +45,35 @@ const Dashboard = () => {
       }
       setLoading(false);
     });
-
     return () => subscription.unsubscribe();
   }, [navigate]);
-
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
+    const {
+      error
+    } = await supabase.auth.signOut();
     if (error) {
       toast({
         title: "Error",
         description: "Failed to logout",
-        variant: "destructive",
+        variant: "destructive"
       });
     } else {
       toast({
         title: "Success",
-        description: "Logged out successfully",
+        description: "Logged out successfully"
       });
       navigate("/auth");
     }
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+    return <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <Truck className="h-12 w-12 text-primary animate-pulse mx-auto mb-4" />
           <p className="text-muted-foreground">Loading...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -81,8 +81,8 @@ const Dashboard = () => {
               <Truck className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">KK Logistics</h1>
-              <p className="text-sm text-muted-foreground">Trip & Expense Manager</p>
+              <h1 className="text-xl font-bold text-foreground">KK LOGISTICS</h1>
+              <p className="text-sm text-muted-foreground">Trip & Expense Manager, AMALESH</p>
             </div>
           </div>
           <Button variant="outline" onClick={handleLogout}>
@@ -137,8 +137,6 @@ const Dashboard = () => {
           </Card>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
