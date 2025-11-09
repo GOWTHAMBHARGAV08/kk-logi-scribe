@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Truck } from "lucide-react";
 import { z } from "zod";
+import kkLogo from "@/assets/kk-logo.png";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }),
@@ -116,11 +116,8 @@ const Auth = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
-            <div className="p-3 bg-primary rounded-lg">
-              <Truck className="h-8 w-8 text-primary-foreground" />
-            </div>
+            <img src={kkLogo} alt="KK Logistics Logo" className="h-24 w-auto" />
           </div>
-          <CardTitle className="text-2xl font-bold">KK Logistics</CardTitle>
           <CardDescription>
             {isLogin ? "Sign in to your account" : "Create a new account"}
           </CardDescription>
