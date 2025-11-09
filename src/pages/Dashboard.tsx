@@ -82,6 +82,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <img src={kkLogo} alt="KK Logistics Logo" className="h-12 w-auto" />
             <div>
+              <h1 className="text-xl font-bold">KK LOGISTICS</h1>
               <p className="text-sm text-muted-foreground">Trip & Expense Manager, AMALESH</p>
             </div>
           </div>
