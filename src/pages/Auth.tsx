@@ -118,6 +118,7 @@ const Auth = () => {
           <div className="flex justify-center mb-4">
             <img src={kkLogo} alt="KK Logistics Logo" className="h-24 w-auto" />
           </div>
+          <CardTitle className="text-2xl font-bold">KK LOGISTICS</CardTitle>
           <CardDescription>
             {isLogin ? "Sign in to your account" : "Create a new account"}
           </CardDescription>
