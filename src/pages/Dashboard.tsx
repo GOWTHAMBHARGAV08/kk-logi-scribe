@@ -83,7 +83,7 @@ const Dashboard = () => {
             <img src={kkLogo} alt="KK Logistics Logo" className="h-12 w-auto" />
             <div>
               <h1 className="text-xl font-bold">KK LOGISTICS</h1>
-              <p className="text-sm text-muted-foreground">Trip & Expense Manager, AMALESH</p>
+              <p className="text-sm text-muted-foreground font-bold">Trip & Expense Manager, AMALESH</p>
             </div>
           </div>
           <Button variant="outline" onClick={handleLogout}>
